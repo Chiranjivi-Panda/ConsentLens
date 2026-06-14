@@ -209,15 +209,18 @@ http://127.0.0.1:8000/docs
 
 ### Home Page
 
-Add screenshot here
+<img width="1415" height="742" alt="image" src="https://github.com/user-attachments/assets/54f2ff31-42d7-42e1-a9b4-dd1bc08903b4" />
+
 
 ### Analysis Result
 
-Add screenshot here
+<img width="1382" height="675" alt="image" src="https://github.com/user-attachments/assets/914dd0f4-7a9c-4f2f-bab8-ada02420df2c" />
+
 
 ### App Comparison
 
-Add screenshot here
+<img width="1397" height="295" alt="image" src="https://github.com/user-attachments/assets/09688e8f-76b4-4796-beca-e0f1ab689f59" />
+
 
 ---
 
