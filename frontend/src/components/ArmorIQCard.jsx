@@ -2,7 +2,7 @@ import { FaShieldAlt } from "react-icons/fa";
 
 export default function ArmorIQCard() {
   return (
-    <section className="max-w-5xl mx-auto px-4 py-20">
+    <section id="about" className="max-w-5xl mx-auto px-4 py-20">
 
       <div className="glass rounded-3xl p-10 text-center border border-cyan-500/30">
 

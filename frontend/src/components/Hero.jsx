@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <section className="text-center py-28">
+    <section id="home" className="text-center py-28">
 
       <div className="absolute blur-3xl bg-purple-600 w-72 h-72 rounded-full opacity-20"></div>
 

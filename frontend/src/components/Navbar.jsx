@@ -13,15 +13,17 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex gap-8">
-          <a href="#">Home</a>
-          <a href="#">Features</a>
-          <a href="#">Compare</a>
-          <a href="#">About</a>
+          <a href="#home">Home</a>
+          <a href="#features">Features</a>
+          <a href="#compare">Compare</a>
+          <a href="#about">About</a>
         </div>
 
-        <button className="bg-primary px-4 py-2 rounded-lg flex items-center gap-2">
+        <button onClick={() =>window.open("https://github.com/imdeepakdk/CONSENTLENS","_blank")}
+          className="bg-primary px-4 py-2 rounded-lg flex items-center gap-2"
+        > 
           <FaGithub />
-          GitHub
+            GitHub
         </button>
 
       </div>

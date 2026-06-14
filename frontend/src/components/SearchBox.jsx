@@ -24,7 +24,7 @@ export default function SearchBox({ onAnalyze, loading }) {
   };
 
   return (
-    <section className="max-w-4xl mx-auto px-4">
+    <section id="features" className="max-w-4xl mx-auto px-4">
       <div className="glass rounded-3xl p-8">
 
         <h2 className="text-2xl font-bold mb-6 text-center">

@@ -2,7 +2,7 @@ export default function ComparisonTable({ results }) {
   if (!results.length) return null;
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-20">
+    <section id="compare" className="max-w-7xl mx-auto px-4 py-20">
 
       <h2 className="text-4xl font-bold mb-10 text-center">
         Compare Apps
