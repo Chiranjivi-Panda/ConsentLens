@@ -152,7 +152,7 @@ ConsentLens
 ### Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ConsentLens.git
+git clone https://github.com/imdeepakdk/CONSENTLENS.git
 ```
 
 ### Frontend
