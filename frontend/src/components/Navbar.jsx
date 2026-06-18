@@ -1,30 +1,29 @@
-import { FaShieldAlt, FaGithub } from "react-icons/fa";
+import { FaShieldAlt } from "react-icons/fa";
 
 export default function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 glass">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <nav className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/10 bg-slate-950/70">
+      <div className="mx-auto px-4 py-4 flex justify-between items-center">
 
-        <div className="flex items-center gap-2">
-          <FaShieldAlt className="text-cyan-400 text-2xl" />
-          <h1 className="font-bold text-xl">
+        <div className="flex items-center gap-3">
+          <FaShieldAlt className="text-yellow-400 text-xl" />
+
+          <h1 className="font-bold text-xl text-indigo-400">
             ConsentLens
           </h1>
         </div>
 
-        <div className="hidden md:flex gap-8">
-          <a href="#home">Home</a>
-          <a href="#features">Features</a>
-          <a href="#compare">Compare</a>
-          <a href="#about">About</a>
-        </div>
+        <div className="flex items-center gap-2">
 
-        <button onClick={() =>window.open("https://github.com/imdeepakdk/CONSENTLENS","_blank")}
-          className="bg-primary px-4 py-2 rounded-lg flex items-center gap-2"
-        > 
-          <FaGithub />
-            GitHub
-        </button>
+          <div className="px-4 py-2 rounded-full border border-blue-500 text-xs bg-blue-500/10 text-blue-300">
+            🛡 ArmorIQ Protected
+          </div>
+
+          <div className="px-4 py-2 rounded-full border border-gray-700 text-xs text-gray-400">
+            NeuroX Hackathon 2026
+          </div>
+
+        </div>
 
       </div>
     </nav>

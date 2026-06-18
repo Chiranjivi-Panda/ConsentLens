@@ -1,81 +1,264 @@
 import { useState } from "react";
-
-import Hero from "../components/Hero";
-import SearchBox from "../components/SearchBox";
-import ResultCard from "../components/ResultCard";
-import ComparisonTable from "../components/ComparisonTable";
 import ArmorIQCard from "../components/ArmorIQCard";
-import LoadingSpinner from "../components/LoadingSpinner";
-import ErrorState from "../components/ErrorState";
 
-import { analyzeApps } from "../services/api";
+import ResultCard from "../components/ResultCard";
+import AuditLog from "../components/AuditLog";
+
+import { APP_DB } from "../data/appDatabase";
+
+import exportPDF from "../utils/exportReport";
 
 export default function Home() {
+  const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleAnalyze = async (apps) => {
-    try {
-      setLoading(true);
-      setError("");
+  const handleAnalyze = async () => {
+    if (!input.trim()) return;
 
-      const data = await analyzeApps(apps);
+    setLoading(true);
 
-      setResults(data.results || []);
-    } catch (err) {
-      console.error(err);
+    await new Promise((r) =>
+      setTimeout(r, 1200)
+    );
 
-      setError(
-        err?.response?.data?.message ||
-          "Unable to connect to backend server."
+    const names = input
+      .split(",")
+      .map((s) =>
+        s.trim().toLowerCase()
       );
-    } finally {
-      setLoading(false);
-    }
+
+    const found = [];
+
+    names.forEach((name) => {
+      if (APP_DB[name]) {
+        found.push(APP_DB[name]);
+      }
+    });
+
+    setResults(found);
+    setLoading(false);
   };
 
   return (
-    <>
-      <Hero />
+    <div
+      style={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg,#020617,#0f172a)",
+        color: "white",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
+          padding: "24px",
+        }}
+      >
+        <div
+          style={{
+            textAlign: "center",
+            padding: "80px 0 50px",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: "72px",
+              fontWeight: "900",
+              marginBottom: "12px",
+              background:
+                "linear-gradient(90deg,#4F46E5,#06B6D4)",
+              WebkitBackgroundClip:
+                "text",
+              color: "transparent",
+            }}
+          >
+            ConsentLens
+          </h1>
 
-      <SearchBox
-        onAnalyze={handleAnalyze}
-        loading={loading}
-      />
+          <p
+            style={{
+              fontSize: "24px",
+              color: "#cbd5e1",
+              marginBottom: "10px",
+            }}
+          >
+            Know What Your Apps Really
+            Know About You
+          </p>
 
-      {loading && <LoadingSpinner />}
+          <p
+            style={{
+              color: "#64748b",
+              fontSize: "16px",
+            }}
+          >
+            You clicked Allow. We show
+            the consequences.
+          </p>
+        </div>
 
-      {error && (
-        <ErrorState message={error} />
-      )}
+        <div
+          style={{
+            maxWidth: "1000px",
+            margin: "0 auto",
+            background:
+              "rgba(15,23,42,0.7)",
+            backdropFilter:
+              "blur(12px)",
+            border:
+              "1px solid rgba(255,255,255,.08)",
+            borderRadius: "20px",
+            padding: "24px",
+            marginBottom: "24px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              flexWrap: "wrap",
+            }}
+          >
+            <input
+              value={input}
+              onChange={(e) =>
+                setInput(
+                  e.target.value
+                )
+              }
+              placeholder="Instagram, WhatsApp, Snapchat"
+              style={{
+                flex: 1,
+                minWidth: "300px",
+                padding: "14px",
+                borderRadius:
+                  "12px",
+                border:
+                  "1px solid #334155",
+                background:
+                  "#1e293b",
+                color: "white",
+                fontSize: "16px",
+                boxShadow:
+                  "0 0 20px rgba(79,70,229,.15)",
+              }}
+            />
 
-      {!loading && results.length > 0 && (
-        <>
-          <section className="max-w-7xl mx-auto px-4 py-16">
+            <button
+              onClick={
+                handleAnalyze
+              }
+              style={{
+                padding:
+                  "14px 26px",
+                borderRadius:
+                  "12px",
+                border: "none",
+                cursor: "pointer",
+                color: "white",
+                fontWeight:
+                  "bold",
+                background:
+                  "linear-gradient(90deg,#4F46E5,#06B6D4)",
+                boxShadow:
+                  "0 0 20px rgba(79,70,229,.4)",
+              }}
+            >
+              🔍 Analyze
+            </button>
+          </div>
+        </div>
 
-            <h2 className="text-4xl font-bold text-center mb-12">
-              Analysis Results
-            </h2>
+        
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        {loading && (
+          <div
+            style={{
+              textAlign: "center",
+              color: "#06B6D4",
+              marginBottom: "20px",
+            }}
+          >
+            🔍 Checking Location Access...
+            📷 Checking Camera Access...
+            🎙️ Checking Microphone Access...
+            👥 Checking Contacts...
+          </div>
+        )}
+        
+        {results.length > 0 && (
+          <>
+            <div
+              style={{
+                maxWidth: "1000px",
+                margin: "0 auto",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent:
+                    "space-between",
+                  alignItems:
+                    "center",
+                  marginBottom:
+                    "16px",
+                }}
+              >
+                <h2>
+                        Analysis Results (
+                  {results.length} app
+                  {results.length > 1
+                    ? "s"
+                    : ""}
+                  )
+                </h2>
 
-              {results.map((result) => (
-                <ResultCard
-                  key={result.appName}
-                  result={result}
-                />
-              ))}
+                <button
+                  onClick={() =>
+                    exportPDF(
+                      results
+                    )
+                  }
+                        style={{
+                    background:
+                      "#14b8a6",
+                    border: "none",
+                    color: "white",
+                    padding:
+                      "10px 18px",
+                    borderRadius:
+                      "10px",
+                    cursor:
+                      "pointer",
+                  }}
+                >
+                  📄 Export Report
+                </button>
+              </div>
 
+              <AuditLog
+                apps={results}
+              />
+
+              {results.map(
+                (app, i) => (
+                  <ResultCard
+                    key={i}
+                    app={app}
+                  />
+                )
+              )}
             </div>
 
-          </section>
-
-          <ComparisonTable results={results} />
-        </>
-      )}
-
-      <ArmorIQCard />
-    </>
+           
+          </>
+        )}
+        <ArmorIQCard />
+      </div>
+    </div>
+    
   );
 }

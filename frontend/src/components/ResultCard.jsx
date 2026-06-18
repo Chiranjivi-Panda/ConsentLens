@@ -1,100 +1,367 @@
-import RiskBadge from "./RiskBadge";
+import { useState } from "react";
 
-export default function ResultCard({ result }) {
+import ScoreGauge from "./ScoreGauge";
+import PermissionChart from "./PermissionChart";
+
+import {
+  CATEGORY_COLORS,
+  LEVEL_CONFIG,
+} from "../data/appDatabase";
+
+export default function ResultCard({
+  app,
+  onCompare,
+  isCompareMode,
+}) {
+  const [expanded, setExpanded] =
+    useState(false);
+
+  const [tab, setTab] =
+    useState("breakdown");
+
+  const cfg =
+    LEVEL_CONFIG[app.level];
+
   return (
-    <div className="glass rounded-3xl p-6 hover:-translate-y-2 transition duration-300">
-
-      <div className="flex justify-between items-center mb-4">
-
-  <div className="flex items-center gap-3">
-
-    <img
-      src={`https://logo.clearbit.com/${result.appName.toLowerCase().replace(/\s/g, "")}.com`}
-      alt={result.appName}
-      className="w-12 h-12 rounded-full bg-white p-1"
-      onError={(e) => {
-        e.target.src =
-          `https://ui-avatars.com/api/?name=${result.appName}&background=4F46E5&color=fff`;
+    <div
+      style={{
+        background:
+          "rgba(15,23,42,0.85)",
+        backdropFilter:
+          "blur(14px)",
+        border:
+          `1px solid ${cfg.border}`,
+        borderRadius: 20,
+        padding: "24px",
+        marginBottom: 16,
+        boxShadow:
+          `0 0 35px ${cfg.border}33`,
+        transition:
+          "all .3s ease",
       }}
-    />
+    >
+      {/* HEADER */}
 
-    <div>
-      <h2 className="text-2xl font-bold">
-        {result.appName}
-      </h2>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 20,
+          marginBottom: 20,
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+          }}
+        >
+          <img
+            src={app.icon}
+            alt={app.name}
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 16,
+              objectFit: "cover",
+              border:
+                "2px solid rgba(255,255,255,.1)",
+            }}
+          />
 
-      {[
-        "instagram",
-        "facebook",
-        "truecaller",
-        "snapchat",
-        "tiktok"
-      ].includes(result.appName.toLowerCase()) && (
-
-        <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full">
-          ⚠ DPDP Non-Compliant
-        </span>
-
-      )}
-    </div>
-
-  </div>
-
-  <RiskBadge level={result.riskLevel} />
-
-</div>
-
-      <div className="mb-4">
-        <p className="text-gray-400 text-sm">
-          Privacy Footprint Score
-        </p>
-
-        <h2 className="text-5xl font-bold text-cyan-400">
-          {result.score}
-        </h2>
-      </div>
-
-      <div className="mb-5">
-        <h4 className="font-semibold mb-2">
-          Summary
-        </h4>
-
-        <p className="text-gray-300">
-          {result.summary}
-        </p>
-      </div>
-
-      <div className="mb-5">
-        <h4 className="font-semibold mb-2">
-          Data Collected
-        </h4>
-
-        <div className="flex flex-wrap gap-2">
-          {result.dataCollected?.map((item) => (
-            <span
-              key={item}
-              className="bg-slate-800 px-3 py-1 rounded-full text-sm"
+          {app.dpdp && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: -6,
+                right: -6,
+                background:
+                  "#7f1d1d",
+                border:
+                  "1px solid #dc2626",
+                borderRadius: 20,
+                padding: "2px 8px",
+                fontSize: 9,
+                color: "#fca5a5",
+                fontWeight: 700,
+              }}
             >
-              {item}
-            </span>
-          ))}
+              DPDP
+            </div>
+          )}
         </div>
+
+        <div style={{ flex: 1 }}>
+          <div
+            style={{
+              fontWeight: 900,
+              fontSize: 28,
+              color: "#f8fafc",
+            }}
+          >
+            {app.name}
+          </div>
+
+          <div
+            style={{
+              color: "#94a3b8",
+              fontSize: 13,
+              marginTop: 4,
+            }}
+          >
+            {
+              Object.keys(
+                app.permissions
+              ).length
+            }{" "}
+            permissions detected
+          </div>
+
+          {app.dpdp && (
+            <div
+              style={{
+                color: "#fca5a5",
+                fontSize: 12,
+                marginTop: 6,
+              }}
+            >
+              ⚠️ Potential DPDP Act
+              2023 Violation
+            </div>
+          )}
+        </div>
+
+        <ScoreGauge
+          score={app.score}
+          level={app.level}
+        />
       </div>
 
-      <div>
-        <h4 className="font-semibold mb-2">
-          Recommended Actions
-        </h4>
+      {/* SUMMARY */}
 
-        <ul className="space-y-2 text-gray-300">
-          {result.recommendedActions?.map((action) => (
-            <li key={action}>
-              • {action}
-            </li>
-          ))}
-        </ul>
+      <p
+        style={{
+          color: "#cbd5e1",
+          fontSize: 14,
+          lineHeight: 1.8,
+          marginBottom: 16,
+        }}
+      >
+        {app.summary}
+      </p>
+
+      {/* PERMISSION TAGS */}
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 10,
+          marginBottom: 18,
+        }}
+      >
+        {Object.entries(
+          app.permissions
+        ).map(
+          ([name, { icon }]) => (
+            <span
+              key={name}
+              style={{
+                background:
+                  "linear-gradient(90deg,#1e293b,#0f172a)",
+                border:
+                  "1px solid rgba(255,255,255,.08)",
+                borderRadius: 30,
+                padding:
+                  "6px 12px",
+                fontSize: 12,
+                color: "#e2e8f0",
+              }}
+            >
+              {icon} {name}
+            </span>
+          )
+        )}
       </div>
 
+      {/* SAFER ALTERNATIVE */}
+
+      {app.safer && (
+        <div
+          style={{
+            background:
+              "linear-gradient(90deg,#052e16,#064e3b)",
+            border:
+              "1px solid #22c55e",
+            borderRadius: 12,
+            padding: 14,
+            marginBottom: 18,
+            fontWeight: 600,
+          }}
+        >
+          <span
+            style={{
+              color: "#86efac",
+            }}
+          >
+            🛡️ Safer Alternative
+          </span>
+
+          <div
+            style={{
+              marginTop: 6,
+              color: "white",
+            }}
+          >
+            {app.safer.name}
+            {" • "}
+            Privacy Score:
+            {" "}
+            {app.safer.score}
+            /100
+          </div>
+        </div>
+      )}
+
+      {/* EXPAND BUTTON */}
+
+      <button
+        onClick={() =>
+          setExpanded(
+            !expanded
+          )
+        }
+        style={{
+          width: "100%",
+          padding: "12px",
+          borderRadius: 12,
+          border:
+            "1px solid #334155",
+          background:
+            "#111827",
+          color: "white",
+          cursor: "pointer",
+          marginBottom:
+            expanded ? 16 : 0,
+        }}
+      >
+        {expanded
+          ? "▲ Hide Details"
+          : "▼ See Full Breakdown"}
+      </button>
+
+      {expanded && (
+        <div>
+          <div
+            style={{
+              display: "flex",
+              gap: 10,
+              marginBottom: 16,
+            }}
+          >
+            {[
+              "breakdown",
+              "chart",
+            ].map((item) => (
+              <button
+                key={item}
+                onClick={() =>
+                  setTab(item)
+                }
+                style={{
+                  padding:
+                    "8px 14px",
+                  borderRadius:
+                    "10px",
+                  border:
+                    "1px solid #334155",
+                  background:
+                    tab === item
+                      ? "#4f46e5"
+                      : "#111827",
+                  color:
+                    "white",
+                  cursor:
+                    "pointer",
+                }}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+
+          {tab ===
+            "breakdown" && (
+            <div>
+              {Object.entries(
+                app.permissions
+              ).map(
+                ([
+                  name,
+                  {
+                    pts,
+                    category,
+                    icon,
+                  },
+                ]) => (
+                  <div
+                    key={name}
+                    style={{
+                      display:
+                        "flex",
+                      gap: 10,
+                      alignItems:
+                        "center",
+                      marginBottom: 12,
+                      padding:
+                        "10px",
+                      background:
+                        "#111827",
+                      borderRadius:
+                        "10px",
+                    }}
+                  >
+                    <span>
+                      {icon}
+                    </span>
+
+                    <span
+                      style={{
+                        flex: 1,
+                        color:
+                          "#e2e8f0",
+                      }}
+                    >
+                      {name}
+                    </span>
+
+                    <span
+                      style={{
+                        color:
+                          CATEGORY_COLORS[
+                            category
+                          ],
+                        fontWeight:
+                          700,
+                      }}
+                    >
+                      +{pts}
+                    </span>
+                  </div>
+                )
+              )}
+            </div>
+          )}
+
+          {tab ===
+            "chart" && (
+            <PermissionChart
+              permissions={
+                app.permissions
+              }
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }
