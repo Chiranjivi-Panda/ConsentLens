@@ -4,11 +4,11 @@ import Home from "./pages/Home";
 
 function App() {
   return (
-    <>
+    <div className="grid-bg" style={{ position: "relative", minHeight: "100vh" }}>
       <Navbar />
       <Home />
       <Footer />
-    </>
+    </div>
   );
 }
 

@@ -1,36 +1,18 @@
 export default function Footer() {
   return (
-    <footer
-      style={{
-        marginTop: "60px",
-        padding: "30px",
-        textAlign: "center",
-        borderTop: "1px solid #1e293b",
-        color: "#94a3b8",
-      }}
-    >
-      <h3
-        style={{
-          color: "#60a5fa",
-          marginBottom: "10px",
-        }}
-      >
+    <footer style={{ 
+      borderTop: "1px solid rgba(99,102,241,0.15)", padding: "40px 24px", 
+      textAlign: "center", marginTop: 40, background: "rgba(3,7,18,0.8)" 
+    }}>
+      <div style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 14, color: "#6366F1", fontWeight: 700, marginBottom: 8 }}>
         ConsentLens
-      </h3>
-
-      <p>
-        Powered by ArmorIQ • Privacy First •
-        NeuroX Hackathon 2026
-      </p>
-
-      <p
-        style={{
-          marginTop: "10px",
-          fontSize: "14px",
-        }}
-      >
+      </div>
+      <div style={{ fontSize: 12, color: "#475569", fontFamily: "JetBrains Mono, monospace" }}>
+        Powered by ArmorIQ · Privacy First · NeuroX Hackathon 2026
+      </div>
+      <div style={{ fontSize: 11, color: "#334155", marginTop: 8, fontFamily: "JetBrains Mono, monospace" }}>
         © 2026 ConsentLens. All Rights Reserved.
-      </p>
+      </div>
     </footer>
   );
 }

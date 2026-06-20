@@ -1,97 +1,126 @@
+import { useEffect, useRef } from "react";
 import { LEVEL_CONFIG } from "../data/appDatabase";
 
-export default function ScoreGauge({
-  score,
-  level,
-}) {
+export default function ScoreGauge({ score, level, size = 120 }) {
+  const progressRef = useRef(null);
   const cfg = LEVEL_CONFIG[level];
 
-  const pct = score / 100;
+  const r = (size / 2) - 12;
+  const cx = size / 2;
+  const cy = size / 2;
+  const circumference = 2 * Math.PI * r;
+  // We use a 270° arc (start top-left, end top-right)
+  const arcLen = circumference * 0.75;
+  const offset = arcLen * (1 - score / 100);
 
-  const r = 54;
-  const cx = 70;
-  const cy = 70;
+  useEffect(() => {
+    const el = progressRef.current;
+    if (!el) return;
+    el.style.transition = "none";
+    el.style.strokeDashoffset = arcLen;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transition = "stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)";
+        el.style.strokeDashoffset = offset;
+      });
+    });
+  }, [score, arcLen, offset]);
 
-  const circumference = Math.PI * r;
-  const offset =
-    circumference * (1 - pct);
+  // 270° arc starting at bottom-left going clockwise to bottom-right
+  const startAngle = 135 * (Math.PI / 180);
+  const endAngle = 45 * (Math.PI / 180);
+
+  const x1 = cx + r * Math.cos(startAngle);
+  const y1 = cy + r * Math.sin(startAngle);
+  const x2 = cx + r * Math.cos(endAngle + 2 * Math.PI);
+  const y2 = cy + r * Math.sin(endAngle + 2 * Math.PI);
+
+  const arcPath = `M ${x1} ${y1} A ${r} ${r} 0 1 1 ${x2} ${y2}`;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <svg
-        width="140"
-        height="80"
-        viewBox="0 0 140 80"
-      >
-        <path
-          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${
-            cx + r
-          } ${cy}`}
-          fill="none"
-          stroke="#1e293b"
-          strokeWidth="14"
-          strokeLinecap="round"
-        />
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+      <div style={{ position: "relative", width: size, height: size }}>
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          style={{ transform: "rotate(0deg)" }}
+        >
+          {/* Track */}
+          <path
+            d={arcPath}
+            fill="none"
+            stroke="rgba(255,255,255,0.06)"
+            strokeWidth={8}
+            strokeLinecap="round"
+          />
+          {/* Progress */}
+          <path
+            ref={progressRef}
+            d={arcPath}
+            fill="none"
+            stroke={cfg.border}
+            strokeWidth={8}
+            strokeLinecap="round"
+            strokeDasharray={arcLen}
+            strokeDashoffset={arcLen}
+            filter={`drop-shadow(0 0 6px ${cfg.border})`}
+          />
+        </svg>
 
-        <path
-          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${
-            cx + r
-          } ${cy}`}
-          fill="none"
-          stroke={cfg.border}
-          strokeWidth="14"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
+        {/* Center content */}
+        <div
           style={{
-            transition:
-              "stroke-dashoffset 1s ease",
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingBottom: size * 0.08,
           }}
-        />
-
-        <text
-          x={cx}
-          y={cy - 8}
-          textAnchor="middle"
-          fill={cfg.text}
-          fontSize="26"
-          fontWeight="bold"
         >
-          {score}
-        </text>
+          <span
+            style={{
+              fontFamily: "Space Grotesk, sans-serif",
+              fontSize: size * 0.28,
+              fontWeight: 700,
+              color: cfg.text,
+              lineHeight: 1,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {score}
+          </span>
+          <span
+            style={{
+              fontSize: size * 0.1,
+              color: "#475569",
+              fontFamily: "JetBrains Mono, monospace",
+              marginTop: 2,
+            }}
+          >
+            /100
+          </span>
+        </div>
+      </div>
 
-        <text
-          x={cx}
-          y={cy + 10}
-          textAnchor="middle"
-          fill="#94a3b8"
-          fontSize="10"
-        >
-          /100
-        </text>
-      </svg>
-
-      <span
+      {/* Risk badge */}
+      <div
         style={{
-          fontSize: 11,
-          color: cfg.text,
-          fontWeight: 700,
-          letterSpacing: 1.5,
+          padding: "4px 12px",
+          borderRadius: 999,
           background: cfg.bg,
-          border: `1px solid ${cfg.border}`,
-          padding: "3px 10px",
-          borderRadius: 20,
-          marginTop: -4,
+          border: `1px solid ${cfg.borderAlpha}`,
+          fontSize: 10,
+          fontWeight: 700,
+          fontFamily: "JetBrains Mono, monospace",
+          color: cfg.text,
+          letterSpacing: "0.1em",
         }}
       >
         {cfg.label}
-      </span>
+      </div>
     </div>
   );
 }
